@@ -360,30 +360,6 @@
   }
   .modal-nav button:hover{border-color:var(--teal); color:var(--teal);}
 
-  /* ---------- MODAL IMAGE GALLERY ---------- */
-  .modal-gallery{
-    display:grid; grid-template-columns:1fr 1fr; gap:10px;
-    margin-bottom:22px;
-  }
-  .modal-gallery.single{grid-template-columns:1fr;}
-  .modal-gallery img{
-    width:100%; height:auto; display:block;
-    border:1px solid var(--line); border-radius:4px;
-    background:#fff;
-    cursor:zoom-in;
-    transition:border-color 0.2s ease;
-  }
-  .modal-gallery img:hover{border-color:var(--teal);}
-
-  /* ---------- IMAGE LIGHTBOX ---------- */
-  .lightbox{
-    position:fixed; inset:0; background:rgba(10,13,20,0.9);
-    display:none; align-items:center; justify-content:center;
-    padding:32px; z-index:200; cursor:zoom-out;
-  }
-  .lightbox.open{display:flex;}
-  .lightbox img{max-width:100%; max-height:100%; border-radius:4px; box-shadow:0 20px 60px -12px rgba(0,0,0,0.6);}
-
   /* ---------- DEMO LINK BADGE ---------- */
   .modal-demo{
     display:inline-flex; align-items:center; gap:7px;
@@ -667,7 +643,6 @@
     <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
     <div class="modal-eyebrow" id="modal-eyebrow">Project</div>
     <h3 id="modal-title"></h3>
-    <div class="modal-gallery" id="modal-gallery"></div>
     <a class="modal-demo" id="modal-demo" href="#" target="_blank" rel="noopener">Open live app</a>
     <div class="modal-section">
       <h4>Overview</h4>
@@ -685,10 +660,6 @@
       </div>
     </div>
   </div>
-</div>
-
-<div class="lightbox" id="lightbox">
-  <img id="lightbox-img" src="" alt="">
 </div>
 
 <section id="skills" class="alt">
@@ -789,13 +760,7 @@
         "Delivered results via interactive visualizations and a dashboard."
       ],
       tags: ["Forecasting", "Linear Programming", "Python", "Dashboard"],
-      link: "https://github.com/youssef6765/IEEE-CAMP",
-      images: [
-        "assets/ieee-correlation-matrix.png",
-        "assets/ieee-allocation-1.png",
-        "assets/ieee-allocation-2.png",
-        "assets/ieee-allocation-3.png"
-      ]
+      link: "https://github.com/youssef6765/IEEE-CAMP"
     },
     {
       title: "System Modeling & Simulation",
@@ -817,11 +782,7 @@
         "Evaluated models via k-fold cross-validation using accuracy, precision, recall, and F1-score."
       ],
       tags: ["Neural Networks", "SVM", "PyTorch / TensorFlow", "Cross-Validation"],
-      link: "https://github.com/youssef6765/LFD_Project",
-      images: [
-        "assets/student-error-folds.png",
-        "assets/student-roc-curves.png"
-      ]
+      link: "https://github.com/youssef6765/LFD_Project"
     },
     {
       title: "Food Composition Optimization via Genetic Algorithm",
@@ -831,11 +792,7 @@
         "Incorporated fuzzy logic to dynamically adjust mutation rates, improving convergence quality."
       ],
       tags: ["Genetic Algorithms", "Fuzzy Logic", "Optimization", "Python"],
-      link: "https://github.com/youssef6765/Genetic-algorithm-project",
-      images: [
-        "assets/genetic-constraints.png",
-        "assets/genetic-flowchart.png"
-      ]
+      link: "https://github.com/youssef6765/Genetic-algorithm-project"
     },
     {
       title: "AI-Driven Supply Chain Optimization (G.O.E.I.C)",
@@ -862,10 +819,7 @@
   const overviewEl = document.getElementById('modal-overview');
   const tagsEl = document.getElementById('modal-tags');
   const repoLinkEl = document.getElementById('modal-repo-link');
-  const galleryEl = document.getElementById('modal-gallery');
   const demoEl = document.getElementById('modal-demo');
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightbox-img');
   let lastFocused = null;
 
   function renderProject(i){
@@ -874,15 +828,6 @@
     eyebrowEl.textContent = p.eyebrow;
     overviewEl.innerHTML = p.overview.map(line => `<li>${line}</li>`).join('');
     tagsEl.innerHTML = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
-
-    if(p.images && p.images.length){
-      galleryEl.style.display = '';
-      galleryEl.classList.toggle('single', p.images.length === 1);
-      galleryEl.innerHTML = p.images.map(src => `<img src="${src}" alt="${p.title} screenshot" loading="lazy">`).join('');
-    } else {
-      galleryEl.style.display = 'none';
-      galleryEl.innerHTML = '';
-    }
 
     if(p.demo){
       demoEl.href = p.demo;
