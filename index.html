@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Youssef Hanaie — Operations Research &amp; Machine Learning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10151F;
+    --bg-alt:#161D2B;
+    --text:#EDEAE0;
+    --text-dim:#8892A6;
+    --gold:#E8A33D;
+    --teal:#5FA8AE;
+    --line:#2A3244;
+    --line-soft:#1E2534;
+    --serif:'Fraunces', serif;
+    --sans:'Inter', sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+
+  .wrap{max-width:1080px; margin:0 auto; padding:0 32px;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(16,21,31,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px; max-width:1080px; margin:0 auto;
+  }
+  .logo{
+    font-family:var(--mono); font-size:14px; letter-spacing:0.02em;
+    color:var(--text);
+  }
+  .logo span{color:var(--gold);}
+  .navlinks{display:flex; gap:28px; list-style:none;}
+  .navlinks a{
+    font-family:var(--mono); font-size:13px; text-decoration:none;
+    color:var(--text-dim); transition:color 0.2s ease;
+    letter-spacing:0.02em;
+  }
+  .navlinks a:hover{color:var(--gold);}
+  .navtoggle{display:none;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:110px 0 90px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero .wrap{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:56px;
+    align-items:center;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; color:var(--teal);
+    letter-spacing:0.12em; text-transform:uppercase;
+    margin-bottom:20px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:''; width:22px; height:1px; background:var(--teal);
+  }
+  h1{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:clamp(38px, 5vw, 60px);
+    line-height:1.05;
+    letter-spacing:-0.01em;
+    margin-bottom:22px;
+  }
+  h1 em{
+    font-style:italic; font-weight:500; color:var(--gold);
+  }
+  .hero p{
+    font-size:16.5px; color:var(--text-dim); max-width:480px; margin-bottom:32px;
+  }
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13px;
+    padding:12px 22px; border-radius:2px;
+    text-decoration:none; letter-spacing:0.02em;
+    transition:all 0.2s ease, transform 0.15s ease-out; display:inline-block;
+    border:1px solid var(--line);
+    will-change:transform;
+  }
+  .btn-primary{
+    background:var(--gold); color:var(--bg); border-color:var(--gold); font-weight:500;
+  }
+  .btn-primary:hover{background:#f0b355;}
+  .btn-ghost{color:var(--text); }
+  .btn-ghost:hover{border-color:var(--teal); color:var(--teal);}
+
+  /* ---------- OPTIMIZATION PLOT (signature element) ---------- */
+  .plot-card{
+    background:var(--bg-alt);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:22px 22px 16px;
+  }
+  .plot-label{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    margin-bottom:10px; letter-spacing:0.04em;
+  }
+  .plot-label .dot{color:var(--gold);}
+  svg#optplot{width:100%; height:auto; display:block;}
+  .feasible{fill:var(--teal); fill-opacity:0.14; stroke:var(--teal); stroke-opacity:0.5; stroke-width:1;}
+  .constraint{stroke:var(--line); stroke-width:1; fill:none;}
+  .objective{
+    stroke:var(--gold); stroke-width:1.4; fill:none;
+    stroke-dasharray:210; stroke-dashoffset:210;
+    animation:sweep 2.6s ease-out forwards 0.4s;
+  }
+  @keyframes sweep{ to{stroke-dashoffset:0;} }
+  .opt-point{
+    fill:var(--gold); r:0;
+    animation:popin 0.4s ease-out forwards 2.6s;
+  }
+  @keyframes popin{ from{r:0;} to{r:4.5;} }
+  .opt-label{
+    fill:var(--gold); font-family:var(--mono); font-size:10.5px;
+    opacity:0; animation:fadein 0.5s ease-out forwards 2.8s;
+  }
+  @keyframes fadein{ to{opacity:1;} }
+  .axis{stroke:var(--line-soft); stroke-width:1;}
+  .tick{fill:var(--text-dim); font-family:var(--mono); font-size:8.5px;}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:90px 0;}
+  section.alt{background:var(--bg-alt); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);}
+  .section-head{margin-bottom:52px; max-width:600px;}
+  .section-num{
+    font-family:var(--mono); font-size:12px; color:var(--gold);
+    letter-spacing:0.1em; margin-bottom:14px; display:block;
+  }
+  h2{
+    font-family:var(--serif); font-weight:500; font-size:clamp(26px,3vw,36px);
+    letter-spacing:-0.01em; margin-bottom:14px;
+  }
+  .section-head p{color:var(--text-dim); font-size:15.5px;}
+
+  /* about */
+  .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px;}
+  .about-grid p{color:var(--text-dim); margin-bottom:16px; font-size:15.5px;}
+  .lang-list{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+  .lang-row{display:flex; justify-content:space-between; font-family:var(--mono); font-size:13px; border-bottom:1px solid var(--line-soft); padding-bottom:10px;}
+  .lang-row span:last-child{color:var(--teal);}
+
+  /* timeline (experience + education — genuinely chronological, numbering justified) */
+  .timeline{border-left:1px solid var(--line); padding-left:32px; display:flex; flex-direction:column; gap:44px;}
+  .tl-item{position:relative;}
+  /* ---------- SCROLL REVEAL ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .tl-item.reveal, .proj-card.reveal, .featured-project.reveal{transition-delay:var(--reveal-delay, 0s);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
+  .tl-item::before{
+    content:''; position:absolute; left:-37.5px; top:4px;
+    width:9px; height:9px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--gold);
+  }
+  .tl-date{font-family:var(--mono); font-size:12px; color:var(--gold); letter-spacing:0.04em;}
+  .tl-title{font-family:var(--serif); font-size:20px; font-weight:500; margin:6px 0 4px;}
+  .tl-org{color:var(--teal); font-size:14px; margin-bottom:10px; font-family:var(--mono);}
+  .tl-item ul{color:var(--text-dim); font-size:14.5px; padding-left:18px; display:flex; flex-direction:column; gap:5px;}
+
+  /* projects */
+  .proj-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+
+  /* ---------- FEATURED GRADUATION PROJECT ---------- */
+  .featured-project{
+    background:linear-gradient(155deg, var(--bg-alt) 0%, #17233020 100%);
+    border:1px solid var(--gold);
+    border-radius:6px;
+    padding:34px 34px 30px;
+    margin-bottom:36px;
+    cursor:pointer;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+    text-align:left; width:100%; font-family:inherit; color:inherit;
+  }
+  .featured-project:hover{ transform:translateY(-2px); box-shadow:0 8px 30px -12px rgba(232,163,61,0.25); }
+  .featured-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px; color:var(--gold);
+    letter-spacing:0.08em; text-transform:uppercase;
+    border:1px solid var(--gold); padding:5px 12px; border-radius:20px;
+    margin-bottom:18px;
+  }
+  .featured-badge::before{ content:'★'; font-size:10px; }
+  .featured-project h3{
+    font-family:var(--serif); font-weight:500; font-size:24px; margin-bottom:12px;
+  }
+  .featured-project > p{ color:var(--text-dim); font-size:15px; max-width:640px; margin-bottom:24px; }
+  .featured-stats{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:22px;
+  }
+  .fstat{ border-left:2px solid var(--line); padding-left:14px; }
+  .fstat .num{ font-family:var(--serif); font-size:22px; color:var(--gold); font-weight:500; display:block; }
+  .fstat .lbl{ font-family:var(--mono); font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.04em; }
+  @media (max-width:700px){ .featured-stats{grid-template-columns:1fr 1fr;} }
+  .proj-card{
+    background:var(--bg-alt); border:1px solid var(--line); border-radius:4px;
+    padding:26px; transition:border-color 0.2s ease, transform 0.2s ease;
+  }
+  .proj-card:hover{border-color:var(--teal); transform:translateY(-2px);}
+  .proj-card h3{font-family:var(--serif); font-weight:500; font-size:18.5px; margin-bottom:10px;}
+  .proj-card p{color:var(--text-dim); font-size:14px; margin-bottom:14px;}
+  .tag-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .tag{
+    font-family:var(--mono); font-size:10.5px; color:var(--teal);
+    border:1px solid var(--line); padding:3px 8px; border-radius:2px;
+  }
+
+  /* skills */
+  .skill-cols{display:grid; grid-template-columns:repeat(4,1fr); gap:28px;}
+  .skill-col h4{
+    font-family:var(--mono); font-size:11px; color:var(--gold);
+    letter-spacing:0.06em; text-transform:uppercase; margin-bottom:14px;
+  }
+  .skill-col ul{list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .skill-col li{font-size:14px; color:var(--text-dim);}
+
+  /* certifications */
+  .cert-list{display:flex; flex-direction:column; gap:0;}
+  .cert-row{
+    display:grid; grid-template-columns:1fr 160px 100px; align-items:baseline; gap:16px;
+    padding:18px 0; border-bottom:1px solid var(--line-soft);
+    font-size:15px;
+  }
+  .cert-row .cert-org{color:var(--teal); font-family:var(--mono); font-size:12.5px; text-align:left;}
+  .cert-row .cert-date{color:var(--text-dim); font-family:var(--mono); font-size:12px; text-align:right;}
+  @media (max-width:600px){
+    .cert-row{grid-template-columns:1fr; gap:6px; text-align:left;}
+    .cert-row .cert-date{text-align:left;}
+  }
+
+  /* contact */
+  .contact-block{
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:32px;
+  }
+  .contact-block h2{max-width:420px;}
+  .contact-links{display:flex; flex-direction:column; gap:14px;}
+  .contact-links a{
+    font-family:var(--mono); font-size:15px; text-decoration:none;
+    color:var(--text); border-bottom:1px solid var(--line);
+    padding-bottom:3px; width:fit-content; transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .contact-links a:hover{color:var(--gold); border-color:var(--gold);}
+
+  footer{
+    padding:32px 0; text-align:center; color:var(--text-dim);
+    font-family:var(--mono); font-size:12px; border-top:1px solid var(--line-soft);
+  }
+
+  /* ---------- PROJECT CARD AS TRIGGER ---------- */
+  .proj-card{
+    cursor:pointer; text-align:left; width:100%;
+    font-family:inherit; color:inherit;
+  }
+  .proj-card:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+  .proj-more{
+    font-family:var(--mono); font-size:11px; color:var(--gold);
+    display:flex; align-items:center; gap:6px; margin-top:16px;
+    opacity:0.85;
+  }
+  .proj-card:hover .proj-more{opacity:1;}
+  .proj-more svg{width:11px; height:11px; transition:transform 0.2s ease;}
+  .proj-card:hover .proj-more svg{transform:translateX(3px);}
+
+  /* ---------- MODAL ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(10,13,20,0.72);
+    backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center;
+    padding:24px; z-index:100;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:var(--bg-alt); border:1px solid var(--line);
+    border-radius:6px; max-width:640px; width:100%;
+    max-height:85vh; overflow-y:auto;
+    padding:38px 36px 34px;
+    position:relative;
+    animation:modalin 0.25s ease-out;
+  }
+  @keyframes modalin{
+    from{opacity:0; transform:translateY(10px) scale(0.98);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  .modal-close{
+    position:absolute; top:20px; right:20px;
+    background:none; border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:16px; line-height:1;
+    transition:color 0.2s ease, border-color 0.2s ease, transform 0.15s ease-out;
+    will-change:transform;
+  }
+  .modal-close:hover{color:var(--gold); border-color:var(--gold);}
+  .modal-eyebrow{
+    font-family:var(--mono); font-size:11px; color:var(--teal);
+    letter-spacing:0.08em; text-transform:uppercase; margin-bottom:14px;
+  }
+  .modal h3{
+    font-family:var(--serif); font-weight:500; font-size:25px; margin-bottom:18px; padding-right:30px;
+  }
+  .modal-section{margin-bottom:20px;}
+  .modal-section h4{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    letter-spacing:0.06em; text-transform:uppercase; margin-bottom:10px;
+  }
+  .modal-section ul{padding-left:18px; display:flex; flex-direction:column; gap:7px;}
+  .modal-section ul li{font-size:14.5px; color:var(--text);}
+  .modal .tag-row{margin-top:4px;}
+  .modal-link{
+    margin-top:24px; padding-top:20px; border-top:1px solid var(--line-soft);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .modal-link a{
+    font-family:var(--mono); font-size:13px; color:var(--gold);
+    text-decoration:none; border-bottom:1px solid var(--gold); padding-bottom:2px;
+  }
+  .modal-nav{display:flex; gap:8px;}
+  .modal-nav button{
+    background:none; border:1px solid var(--line); color:var(--text-dim);
+    font-family:var(--mono); font-size:11px; padding:6px 12px; border-radius:2px;
+    cursor:pointer; transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .modal-nav button:hover{border-color:var(--teal); color:var(--teal);}
+
+  /* ---------- MODAL IMAGE GALLERY ---------- */
+  .modal-gallery{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    margin-bottom:22px;
+  }
+  .modal-gallery.single{grid-template-columns:1fr;}
+  .modal-gallery img{
+    width:100%; height:auto; display:block;
+    border:1px solid var(--line); border-radius:4px;
+    background:#fff;
+    cursor:zoom-in;
+    transition:border-color 0.2s ease;
+  }
+  .modal-gallery img:hover{border-color:var(--teal);}
+
+  /* ---------- IMAGE LIGHTBOX ---------- */
+  .lightbox{
+    position:fixed; inset:0; background:rgba(10,13,20,0.9);
+    display:none; align-items:center; justify-content:center;
+    padding:32px; z-index:200; cursor:zoom-out;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:100%; max-height:100%; border-radius:4px; box-shadow:0 20px 60px -12px rgba(0,0,0,0.6);}
+
+  /* ---------- DEMO LINK BADGE ---------- */
+  .modal-demo{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:12px; color:var(--bg);
+    background:var(--teal); text-decoration:none;
+    padding:8px 14px; border-radius:3px; margin-bottom:20px;
+    transition:opacity 0.2s ease;
+  }
+  .modal-demo:hover{opacity:0.85;}
+  .modal-demo::before{
+    content:''; width:7px; height:7px; border-radius:50%;
+    background:var(--bg); opacity:0.6;
+  }
+  .proj-card .demo-badge, .featured-project .demo-badge{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:var(--mono); font-size:10.5px; color:var(--teal);
+    letter-spacing:0.04em; text-transform:uppercase;
+    margin-top:10px;
+  }
+  .proj-card .demo-badge::before, .featured-project .demo-badge::before{
+    content:''; width:6px; height:6px; border-radius:50%; background:var(--teal);
+  }
+
+  @media (max-width:820px){
+    .hero .wrap{grid-template-columns:1fr;}
+    .about-grid{grid-template-columns:1fr;}
+    .proj-grid{grid-template-columns:1fr;}
+    .skill-cols{grid-template-columns:1fr 1fr;}
+    .navlinks{display:none;}
+    .contact-block{flex-direction:column; align-items:flex-start;}
+  }
+  @media (max-width:520px){
+    .skill-cols{grid-template-columns:1fr;}
+  }
+
+  /* ---------- CUSTOM CURSOR ---------- */
+  .cx-zone.cx-none, .cx-zone.cx-none *{cursor:none !important;}
+
+  .cx-ring{
+    position:fixed; top:0; left:0; width:32px; height:32px;
+    margin:-16px 0 0 -16px;
+    border:1px solid var(--gold);
+    border-radius:50%;
+    pointer-events:none; z-index:9999;
+    transform:translate(-100px,-100px);
+    transition:width 0.25s ease, height 0.25s ease, margin 0.25s ease,
+               border-color 0.25s ease, border-radius 0.25s ease, opacity 0.2s ease;
+    opacity:0;
+  }
+  .cx-ring::before, .cx-ring::after{
+    content:''; position:absolute; background:var(--gold);
+  }
+  .cx-ring::before{ top:50%; left:-5px; width:6px; height:1px; transform:translateY(-50%); }
+  .cx-ring::after{ left:50%; top:-5px; height:6px; width:1px; transform:translateX(-50%); }
+
+  .cx-dot{
+    position:fixed; top:0; left:0; width:4px; height:4px; margin:-2px 0 0 -2px;
+    background:var(--gold); border-radius:50%;
+    pointer-events:none; z-index:9999;
+    transform:translate(-100px,-100px);
+    opacity:0; transition:opacity 0.2s ease;
+  }
+
+  .cx-coords{
+    position:fixed; top:0; left:0; z-index:9999;
+    font-family:var(--mono); font-size:10px; color:var(--gold);
+    pointer-events:none; white-space:nowrap;
+    transform:translate(-100px,-100px);
+    opacity:0; transition:opacity 0.2s ease;
+    letter-spacing:0.02em;
+  }
+
+  body.cx-active .cx-ring,
+  body.cx-active .cx-dot,
+  body.cx-active .cx-coords{ opacity:1; }
+
+  body.cx-hover .cx-ring{
+    width:54px; height:54px; margin:-27px 0 0 -27px;
+    border-color:var(--teal); border-radius:8px;
+  }
+  body.cx-hover .cx-ring::before, body.cx-hover .cx-ring::after{ background:var(--teal); opacity:0; }
+  body.cx-hover .cx-coords{ color:var(--teal); }
+  body.cx-down .cx-ring{ width:24px; height:24px; margin:-12px 0 0 -12px; }
+
+  @media (pointer:coarse){
+    .cx-ring, .cx-dot, .cx-coords{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cx-ring" id="cx-ring"></div>
+<div class="cx-dot" id="cx-dot"></div>
+<div class="cx-coords" id="cx-coords"></div>
+
+<header>
+  <nav>
+    <div class="logo">YOUSSEF<span>.</span>OR</div>
+    <ul class="navlinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero cx-zone" id="cx-zone-hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Operations Research → Applied ML</div>
+      <h1>Finding the <em>optimal</em> point in every feasible space.</h1>
+      <p>I'm Youssef Hanaie, a senior Operations Research &amp; Decision Support student at Cairo University. I build systems that sit between prediction and decision — forecasting what will happen, then optimizing what to do about it.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#projects">View projects</a>
+        <a class="btn btn-ghost" href="#contact">Get in touch</a>
+      </div>
+    </div>
+    <div class="plot-card">
+      <div class="plot-label"><span>feasible_region.solve()</span><span class="dot">● optimal found</span></div>
+      <svg id="optplot" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+        <line class="axis" x1="30" y1="20" x2="30" y2="220"/>
+        <line class="axis" x1="30" y1="220" x2="280" y2="220"/>
+        <text class="tick" x="24" y="230">0</text>
+        <text class="tick" x="270" y="234">x₁</text>
+        <text class="tick" x="10" y="26">x₂</text>
+
+        <polygon class="feasible" points="30,220 30,90 100,50 220,80 200,220"/>
+        <line class="constraint" x1="30" y1="90" x2="100" y2="50"/>
+        <line class="constraint" x1="100" y1="50" x2="220" y2="80"/>
+        <line class="constraint" x1="220" y1="80" x2="200" y2="220"/>
+
+        <line class="objective" x1="55" y1="195" x2="220" y2="80"/>
+
+        <circle class="opt-point" cx="220" cy="80"/>
+        <text class="opt-label" x="228" y="76">x* optimal</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">01 — About</span>
+      <h2>Where OR meets ML</h2>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p>My coursework spans linear &amp; non-linear programming, algorithms, simulation, and data science — the toolkit for turning uncertainty into a decision you can defend. Machine learning gives me the forecast; operations research gives me the plan.</p>
+        <p>That combination shows up across my project work: instead of stopping at a prediction, I push through to the allocation, schedule, or route that the prediction should drive.</p>
+      </div>
+      <div>
+        <p style="margin-bottom:20px;">Currently completing my B.Sc. at Cairo University (2022–2026), with hands-on training from NTI and IEEE in supervised &amp; unsupervised ML, neural networks, and applied forecasting.</p>
+        <div class="lang-list">
+          <div class="lang-row"><span>English</span><span>Fluent</span></div>
+          <div class="lang-row"><span>Arabic</span><span>Fluent</span></div>
+          <div class="lang-row"><span>French</span><span>Limited working proficiency</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">02 — Experience &amp; Education</span>
+      <h2>Training timeline</h2>
+      <p>Chronological — each stage built directly on the last.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal" style="--reveal-delay:0s">
+        <div class="tl-date">2022 – 2026</div>
+        <div class="tl-title">B.Sc. Operation Research &amp; Decision Support</div>
+        <div class="tl-org">Cairo University — Senior (4th Year)</div>
+        <ul>
+          <li>Coursework: Data Analytics, Data Science, ML &amp; AI, Linear &amp; Non-Linear Programming, Algorithms, Simulation</li>
+          <li>Graduation Project: AI-Driven Supply Chain Optimization using Reinforcement Learning (G.O.E.I.C) — see Projects below</li>
+        </ul>
+      </div>
+      <div class="tl-item reveal" style="--reveal-delay:0.1s">
+        <div class="tl-date">Aug 2025</div>
+        <div class="tl-title">AI &amp; Machine Learning Summer Training</div>
+        <div class="tl-org">IEEE Camp</div>
+        <ul>
+          <li>4-week intensive covering AI fundamentals, probability for ML, data preprocessing, and neural networks</li>
+          <li>Applied regression, classification, decision trees, clustering, CNNs, and transfer learning to Netflix, IBM, and Amazon datasets</li>
+          <li>Final project: predictive model for resource allocation using forecasting and linear programming</li>
+        </ul>
+      </div>
+      <div class="tl-item reveal" style="--reveal-delay:0.2s">
+        <div class="tl-date">Aug – Sept 2025</div>
+        <div class="tl-title">Machine Learning Course</div>
+        <div class="tl-org">National Telecommunication Institute (NTI)</div>
+        <ul>
+          <li>Core supervised algorithms: Linear/Logistic Regression, KNN, SVM, Naïve Bayes, Decision Trees, Random Forests, Boosting</li>
+          <li>Unsupervised techniques: K-Means, Gaussian Mixture Models, PCA</li>
+          <li>Introduction to neural networks and model selection</li>
+        </ul>
+      </div>
+      <div class="tl-item reveal" style="--reveal-delay:0.3s">
+        <div class="tl-date">July 2022</div>
+        <div class="tl-title">High School Diploma</div>
+        <div class="tl-org">Collège De La Salle, El Daher — French School</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">03 — Projects</span>
+      <h2>Selected work</h2>
+      <p>From predictive models to full optimization pipelines.</p>
+    </div>
+    <button class="featured-project reveal" data-project="5">
+      <div class="featured-badge">Graduation Project — Cairo University</div>
+      <h3>AI-Driven Supply Chain Optimization (G.O.E.I.C)</h3>
+      <p>Formulated inventory replenishment as a Markov Decision Process and trained a PPO reinforcement-learning agent — built on real Egyptian import/export trade data (2020–2025) — to dynamically optimize ordering decisions across a simulated supply chain, benchmarked against a historical-replay baseline.</p>
+      <div class="featured-stats">
+        <div class="fstat"><span class="num">+98.6%</span><span class="lbl">Reward vs. baseline</span></div>
+        <div class="fstat"><span class="num">−75%</span><span class="lbl">Avg. inventory held</span></div>
+        <div class="fstat"><span class="num">~99%</span><span class="lbl">Fill rate maintained</span></div>
+        <div class="fstat"><span class="num">5</span><span class="lbl">-person team</span></div>
+      </div>
+      <div class="tag-row">
+        <span class="tag">Reinforcement Learning</span><span class="tag">PPO</span><span class="tag">Ray RLlib</span><span class="tag">Gymnasium</span><span class="tag">PyTorch</span><span class="tag">Streamlit</span>
+      </div>
+      <div class="proj-more">View full case study <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+    </button>
+    <div class="proj-grid" id="proj-grid">
+      <button class="proj-card reveal" data-project="0" style="--reveal-delay:0s">
+        <h3>Personality Type Predictor</h3>
+        <p>Streamlit web app predicting Extrovert / Introvert / Ambivert from user traits, with a full preprocessing pipeline and three trained classifiers.</p>
+        <div class="tag-row">
+          <span class="tag">Python</span><span class="tag">Scikit-learn</span><span class="tag">Streamlit</span><span class="tag">Pandas</span>
+        </div>
+        <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+      </button>
+      <button class="proj-card reveal" data-project="1" style="--reveal-delay:0.08s">
+        <h3>Predictive Model for Resource Allocation</h3>
+        <p>Forecasted resource demand with regression and time-series methods, then applied linear programming to allocate resources efficiently and reduce waste.</p>
+        <div class="tag-row">
+          <span class="tag">Forecasting</span><span class="tag">Linear Programming</span><span class="tag">Dashboard</span>
+        </div>
+        <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+      </button>
+      <button class="proj-card reveal" data-project="2" style="--reveal-delay:0.16s">
+        <h3>System Modeling &amp; Simulation</h3>
+        <p>Simulated a multi-channel petrol station queue and a two-level hospital inventory system, generating statistical reports on wait times, idle time, and inventory trends.</p>
+        <div class="tag-row">
+          <span class="tag">Simulation</span><span class="tag">Probabilistic Models</span><span class="tag">Queueing</span>
+        </div>
+        <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+      </button>
+      <button class="proj-card reveal" data-project="3" style="--reveal-delay:0.24s">
+        <h3>Student Performance Prediction</h3>
+        <p>Trained a 3-hidden-layer neural network (ReLU, Adam) and an SVM with linear kernel to predict math performance, evaluated via k-fold cross-validation.</p>
+        <div class="tag-row">
+          <span class="tag">Neural Networks</span><span class="tag">SVM</span><span class="tag">Cross-Validation</span>
+        </div>
+        <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+      </button>
+      <button class="proj-card reveal" data-project="4" style="--reveal-delay:0.32s">
+        <h3>Food Composition Optimization</h3>
+        <p>Engineered a genetic algorithm to optimize food composition under nutritional constraints, using fuzzy logic to dynamically adjust mutation rates for better convergence.</p>
+        <div class="tag-row">
+          <span class="tag">Genetic Algorithms</span><span class="tag">Fuzzy Logic</span><span class="tag">Optimization</span>
+        </div>
+        <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+    <div class="modal-eyebrow" id="modal-eyebrow">Project</div>
+    <h3 id="modal-title"></h3>
+    <div class="modal-gallery" id="modal-gallery"></div>
+    <a class="modal-demo" id="modal-demo" href="#" target="_blank" rel="noopener">Open live app</a>
+    <div class="modal-section">
+      <h4>Overview</h4>
+      <ul id="modal-overview"></ul>
+    </div>
+    <div class="modal-section">
+      <h4>Stack</h4>
+      <div class="tag-row" id="modal-tags"></div>
+    </div>
+    <div class="modal-link">
+      <a id="modal-repo-link" href="https://github.com/youssef6765" target="_blank" rel="noopener">View repository on GitHub →</a>
+      <div class="modal-nav">
+        <button id="modal-prev" aria-label="Previous project">← Prev</button>
+        <button id="modal-next" aria-label="Next project">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<section id="skills" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">04 — Skills</span>
+      <h2>Technical toolkit</h2>
+    </div>
+    <div class="skill-cols">
+      <div class="skill-col">
+        <h4>Languages</h4>
+        <ul><li>Python</li><li>C++</li><li>SQL</li><li>MATLAB</li><li>Java</li><li>JavaScript</li><li>HTML/CSS</li></ul>
+      </div>
+      <div class="skill-col">
+        <h4>Libraries</h4>
+        <ul><li>Pandas</li><li>NumPy</li><li>SQLAlchemy</li><li>PyTorch</li><li>TensorFlow</li><li>Scikit-learn</li><li>SciPy</li><li>Seaborn</li><li>Matplotlib</li></ul>
+      </div>
+      <div class="skill-col">
+        <h4>Tools</h4>
+        <ul><li>Linux / Shell Scripting</li><li>Git</li><li>Microsoft Office</li><li>LaTeX</li></ul>
+      </div>
+      <div class="skill-col">
+        <h4>ML / DS</h4>
+        <ul><li>Data Modeling</li><li>ETL</li><li>Machine Learning</li><li>Statistical Analysis</li><li>Geospatial Analysis</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">05 — Certifications</span>
+      <h2>Continued learning</h2>
+    </div>
+    <div class="cert-list">
+      <div class="cert-row">
+        <span>Getting Started with Deep Learning</span>
+        <span class="cert-org">NVIDIA</span>
+        <span class="cert-date">Sept 2025</span>
+      </div>
+      <div class="cert-row">
+        <span>Building LLM Applications with Prompt Engineering</span>
+        <span class="cert-org">NVIDIA</span>
+        <span class="cert-date">Sept 2025</span>
+      </div>
+      <div class="cert-row">
+        <span>Introduction to Transformer-Based Natural Language Processing</span>
+        <span class="cert-org">NVIDIA</span>
+        <span class="cert-date">Sept 2025</span>
+      </div>
+      <div class="cert-row">
+        <span>Python Bootcamp</span>
+        <span class="cert-org">Udemy</span>
+        <span class="cert-date">Aug 2024</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="alt">
+  <div class="wrap">
+    <div class="contact-block">
+      <h2>Let's talk about a problem worth solving.</h2>
+      <div class="contact-links">
+        <a href="mailto:Youssef564@outlook.com">Youssef564@outlook.com</a>
+        <a href="tel:+201117047904">+20 111 704 7904</a>
+        <a href="https://github.com/youssef6765" target="_blank" rel="noopener">github.com/youssef6765</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Youssef Hanaie Hussien Ibrahim — Cairo, Egypt
+</footer>
+
+<script>
+  const projects = [
+    {
+      title: "Personality Type Predictor",
+      eyebrow: "ML Project — NTI",
+      overview: [
+        "Developed a Streamlit web app to predict personality types (Extrovert / Introvert / Ambivert) from user traits.",
+        "Built and trained Logistic Regression, Decision Tree, and Random Forest classifiers.",
+        "Implemented a full preprocessing pipeline: feature scaling and encoding."
+      ],
+      tags: ["Python", "Scikit-learn", "Streamlit", "Pandas", "NumPy", "Matplotlib", "Joblib"],
+      link: "https://github.com/youssef6765/PersonalityPredictor-Nti-project",
+      demo: "https://personalitypredictor-nti-project.streamlit.app/"
+    },
+    {
+      title: "Predictive Model for Resource Allocation",
+      eyebrow: "IEEE Camp — Final Project",
+      overview: [
+        "Forecasted resource demand using regression and time-series techniques.",
+        "Applied linear programming to allocate resources efficiently, reducing waste.",
+        "Delivered results via interactive visualizations and a dashboard."
+      ],
+      tags: ["Forecasting", "Linear Programming", "Python", "Dashboard"],
+      link: "https://github.com/youssef6765/IEEE-CAMP",
+      images: [
+        "assets/ieee-correlation-matrix.png",
+        "assets/ieee-allocation-1.png",
+        "assets/ieee-allocation-2.png",
+        "assets/ieee-allocation-3.png"
+      ]
+    },
+    {
+      title: "System Modeling & Simulation",
+      eyebrow: "Simulation Project",
+      overview: [
+        "Simulated a multi-channel petrol station queue, analyzing wait times and driver behavior using probabilistic models.",
+        "Modeled a two-level hospital inventory system to minimize shortages and optimize replenishment.",
+        "Generated statistical reports evaluating idle times, average wait times, and inventory trends."
+      ],
+      tags: ["Simulation", "Probabilistic Models", "Queueing Theory", "Statistical Analysis"],
+      link: "https://github.com/youssef6765/Simulation-Project"
+    },
+    {
+      title: "Student Performance Prediction",
+      eyebrow: "ML Project",
+      overview: [
+        "Trained a neural network (3 hidden layers, ReLU, Adam optimizer) to predict student math performance.",
+        "Implemented an SVM with a linear kernel and optimized the regularization parameter C.",
+        "Evaluated models via k-fold cross-validation using accuracy, precision, recall, and F1-score."
+      ],
+      tags: ["Neural Networks", "SVM", "PyTorch / TensorFlow", "Cross-Validation"],
+      link: "https://github.com/youssef6765/LFD_Project",
+      images: [
+        "assets/student-error-folds.png",
+        "assets/student-roc-curves.png"
+      ]
+    },
+    {
+      title: "Food Composition Optimization via Genetic Algorithm",
+      eyebrow: "Optimization Project",
+      overview: [
+        "Engineered a genetic algorithm to optimize food composition under nutritional constraints.",
+        "Incorporated fuzzy logic to dynamically adjust mutation rates, improving convergence quality."
+      ],
+      tags: ["Genetic Algorithms", "Fuzzy Logic", "Optimization", "Python"],
+      link: "https://github.com/youssef6765/Genetic-algorithm-project",
+      images: [
+        "assets/genetic-constraints.png",
+        "assets/genetic-flowchart.png"
+      ]
+    },
+    {
+      title: "AI-Driven Supply Chain Optimization (G.O.E.I.C)",
+      eyebrow: "Graduation Project — Cairo University, Faculty of Computers & AI",
+      overview: [
+        "Formulated inventory replenishment as a Markov Decision Process and built a custom Gymnasium-compatible simulation environment on real Egyptian import/export trade data (2020–2025).",
+        "Trained a Proximal Policy Optimization (PPO) agent via Ray RLlib/PyTorch to dynamically decide order quantities, balancing revenue, holding cost, ordering cost, and a lost-sales penalty.",
+        "Benchmarked against a historical-replay baseline evaluated through the identical environment and cost parameters for a fair comparison.",
+        "Achieved a 98.6% improvement in cumulative reward, cutting average inventory held by roughly 75% while maintaining a fill rate near 99%.",
+        "Stress-tested generalization on an out-of-distribution external benchmark (Zepto quick-commerce data) with zero fine-tuning.",
+        "Delivered an interactive Streamlit dashboard for live inference, letting non-technical stakeholders query the trained model for order recommendations.",
+        "Team of 5, supervised by Prof. Dr. Tarek Abu Eleinen and TA Mohamed Metwally."
+      ],
+      tags: ["Reinforcement Learning", "PPO", "Ray RLlib", "Gymnasium", "PyTorch", "Streamlit", "Markov Decision Process"],
+      link: "https://github.com/youssef6765/Grad.app",
+      demo: "https://gradapp-8db85p9lzyq3sw6b2sqs6g.streamlit.app/"
+    }
+  ];
+
+  let current = 0;
+  const backdrop = document.getElementById('modal-backdrop');
+  const titleEl = document.getElementById('modal-title');
+  const eyebrowEl = document.getElementById('modal-eyebrow');
+  const overviewEl = document.getElementById('modal-overview');
+  const tagsEl = document.getElementById('modal-tags');
+  const repoLinkEl = document.getElementById('modal-repo-link');
+  const galleryEl = document.getElementById('modal-gallery');
+  const demoEl = document.getElementById('modal-demo');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  let lastFocused = null;
+
+  function renderProject(i){
+    const p = projects[i];
+    titleEl.textContent = p.title;
+    eyebrowEl.textContent = p.eyebrow;
+    overviewEl.innerHTML = p.overview.map(line => `<li>${line}</li>`).join('');
+    tagsEl.innerHTML = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+    if(p.images && p.images.length){
+      galleryEl.style.display = '';
+      galleryEl.classList.toggle('single', p.images.length === 1);
+      galleryEl.innerHTML = p.images.map(src => `<img src="${src}" alt="${p.title} screenshot" loading="lazy">`).join('');
+    } else {
+      galleryEl.style.display = 'none';
+      galleryEl.innerHTML = '';
+    }
+
+    if(p.demo){
+      demoEl.href = p.demo;
+      demoEl.style.display = 'inline-flex';
+    } else {
+      demoEl.style.display = 'none';
+    }
+
+    if(p.link){
+      repoLinkEl.href = p.link;
+      repoLinkEl.style.display = '';
+    } else {
+      repoLinkEl.style.display = 'none';
+    }
+  }
+
+  function openModal(i){
+    current = i;
+    renderProject(current);
+    lastFocused = document.activeElement;
+    backdrop.classList.add('open');
+    document.getElementById('modal-close').focus();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    if(lastFocused) lastFocused.focus();
+  }
+
+  document.querySelectorAll('.proj-card, .featured-project').forEach(card => {
+    card.addEventListener('click', () => openModal(parseInt(card.dataset.project, 10)));
+  });
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  backdrop.addEventListener('click', (e) => { if(e.target === backdrop) closeModal(); });
+  document.addEventListener('keydown', (e) => {
+    if(!backdrop.classList.contains('open')) return;
+    if(e.key === 'Escape') closeModal();
+    if(e.key === 'ArrowRight') { current = (current + 1) % projects.length; renderProject(current); }
+    if(e.key === 'ArrowLeft') { current = (current - 1 + projects.length) % projects.length; renderProject(current); }
+  });
+  document.getElementById('modal-next').addEventListener('click', () => {
+    current = (current + 1) % projects.length; renderProject(current);
+  });
+  document.getElementById('modal-prev').addEventListener('click', () => {
+    current = (current - 1 + projects.length) % projects.length; renderProject(current);
+  });
+
+  /* ---------- CUSTOM CURSOR BEHAVIOR (hero + projects only) ---------- */
+  (function(){
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!fine || reduced) return;
+
+    const ring = document.getElementById('cx-ring');
+    const dot = document.getElementById('cx-dot');
+    const coords = document.getElementById('cx-coords');
+    const zones = document.querySelectorAll('.cx-zone');
+
+    let mx = -100, my = -100;      // raw pointer position
+    let rx = -100, ry = -100;      // eased ring position
+    let active = false;
+
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      if(!active) return;
+      dot.style.transform = `translate(${mx - 2}px, ${my - 2}px)`;
+      coords.style.transform = `translate(${mx + 18}px, ${my + 14}px)`;
+      coords.textContent = `x:${Math.round(mx)}  y:${Math.round(my)}`;
+    });
+
+    function loop(){
+      if(active){
+        rx += (mx - rx) * 0.18;
+        ry += (my - ry) * 0.18;
+        ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px)`;
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    zones.forEach(zone => {
+      zone.addEventListener('mouseenter', () => {
+        active = true;
+        rx = mx; ry = my;
+        zone.classList.add('cx-none');
+        document.body.classList.add('cx-active');
+      });
+      zone.addEventListener('mouseleave', () => {
+        active = false;
+        zone.classList.remove('cx-none');
+        document.body.classList.remove('cx-active', 'cx-hover', 'cx-down');
+      });
+    });
+
+    window.addEventListener('mousedown', () => { if(active) document.body.classList.add('cx-down'); });
+    window.addEventListener('mouseup', () => document.body.classList.remove('cx-down'));
+
+    const interactive = document.querySelectorAll(
+      '.cx-zone a, .cx-zone button, .cx-zone .proj-card, .cx-zone [tabindex]'
+    );
+    interactive.forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cx-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cx-hover'));
+    });
+
+    /* subtle magnetic pull on primary buttons within the zones */
+    document.querySelectorAll('.cx-zone .btn').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect();
+        const relX = e.clientX - (r.left + r.width / 2);
+        const relY = e.clientY - (r.top + r.height / 2);
+        el.style.transform = `translate(${relX * 0.18}px, ${relY * 0.28}px)`;
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+    });
+  })();
+
+  /* ---------- SCROLL REVEAL OBSERVER ---------- */
+  (function(){
+    const revealEls = document.querySelectorAll('.reveal');
+    if(!revealEls.length) return;
+
+    if(!('IntersectionObserver' in window)){
+      revealEls.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    revealEls.forEach(el => io.observe(el));
+  })();
+</script>
+
+</body>
+</html>
