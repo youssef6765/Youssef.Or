@@ -199,6 +199,26 @@
   /* projects */
   .proj-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
 
+  /* ---------- CATEGORY FILTERS ---------- */
+  .proj-filters{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-bottom:36px;
+  }
+  .filter-btn{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:0.03em;
+    color:var(--text-dim); background:transparent;
+    border:1px solid var(--line); border-radius:20px;
+    padding:8px 18px; cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .filter-btn:hover{border-color:var(--teal); color:var(--teal);}
+  .filter-btn.active{
+    background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:500;
+  }
+  .proj-card.filtered-out, .featured-project.filtered-out{
+    display:none;
+  }
+
   /* ---------- FEATURED GRADUATION PROJECT ---------- */
   .featured-project{
     background:linear-gradient(155deg, var(--bg-alt) 0%, #17233020 100%);
@@ -602,7 +622,15 @@
       <h2>Selected work</h2>
       <p>From predictive models to full optimization pipelines.</p>
     </div>
-    <button class="featured-project reveal" data-project="5">
+
+    <div class="proj-filters" role="group" aria-label="Filter projects by category">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="ai">AI</button>
+      <button class="filter-btn" data-filter="ml">Machine Learning</button>
+      <button class="filter-btn" data-filter="website">Website</button>
+    </div>
+
+    <button class="featured-project reveal" data-project="5" data-category="ai">
       <div class="featured-badge">Graduation Project — Cairo University</div>
       <h3>AI-Driven Supply Chain Optimization (G.O.E.I.C)</h3>
       <p>Formulated inventory replenishment as a Markov Decision Process and trained a PPO reinforcement-learning agent — built on real Egyptian import/export trade data (2020–2025) — to dynamically optimize ordering decisions across a simulated supply chain, benchmarked against a historical-replay baseline.</p>
@@ -618,7 +646,7 @@
       <div class="proj-more">View full case study <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
     </button>
     <div class="proj-grid" id="proj-grid">
-      <button class="proj-card reveal" data-project="0" style="--reveal-delay:0s">
+      <button class="proj-card reveal" data-project="0" data-category="ml" style="--reveal-delay:0s">
         <h3>Personality Type Predictor</h3>
         <p>Streamlit web app predicting Extrovert / Introvert / Ambivert from user traits, with a full preprocessing pipeline and three trained classifiers.</p>
         <div class="tag-row">
@@ -626,7 +654,7 @@
         </div>
         <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
       </button>
-      <button class="proj-card reveal" data-project="1" style="--reveal-delay:0.08s">
+      <button class="proj-card reveal" data-project="1" data-category="ml" style="--reveal-delay:0.08s">
         <h3>Predictive Model for Resource Allocation</h3>
         <p>Forecasted resource demand with regression and time-series methods, then applied linear programming to allocate resources efficiently and reduce waste.</p>
         <div class="tag-row">
@@ -634,7 +662,7 @@
         </div>
         <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
       </button>
-      <button class="proj-card reveal" data-project="2" style="--reveal-delay:0.16s">
+      <button class="proj-card reveal" data-project="2" data-category="ai" style="--reveal-delay:0.16s">
         <h3>System Modeling &amp; Simulation</h3>
         <p>Simulated a multi-channel petrol station queue and a two-level hospital inventory system, generating statistical reports on wait times, idle time, and inventory trends.</p>
         <div class="tag-row">
@@ -642,7 +670,7 @@
         </div>
         <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
       </button>
-      <button class="proj-card reveal" data-project="3" style="--reveal-delay:0.24s">
+      <button class="proj-card reveal" data-project="3" data-category="ml" style="--reveal-delay:0.24s">
         <h3>Student Performance Prediction</h3>
         <p>Trained a 3-hidden-layer neural network (ReLU, Adam) and an SVM with linear kernel to predict math performance, evaluated via k-fold cross-validation.</p>
         <div class="tag-row">
@@ -650,11 +678,19 @@
         </div>
         <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
       </button>
-      <button class="proj-card reveal" data-project="4" style="--reveal-delay:0.32s">
+      <button class="proj-card reveal" data-project="4" data-category="ai" style="--reveal-delay:0.32s">
         <h3>Food Composition Optimization</h3>
         <p>Engineered a genetic algorithm to optimize food composition under nutritional constraints, using fuzzy logic to dynamically adjust mutation rates for better convergence.</p>
         <div class="tag-row">
           <span class="tag">Genetic Algorithms</span><span class="tag">Fuzzy Logic</span><span class="tag">Optimization</span>
+        </div>
+        <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
+      </button>
+      <button class="proj-card reveal" data-project="6" data-category="website" style="--reveal-delay:0.4s">
+        <h3>TripClone — Group Travel Booking Platform</h3>
+        <p>Full-stack group travel booking platform built with Laravel, featuring a Filament-powered admin dashboard and a public trip catalog with search, filtering, and a booking request flow.</p>
+        <div class="tag-row">
+          <span class="tag">Laravel</span><span class="tag">Filament</span><span class="tag">MySQL</span><span class="tag">Tailwind CSS</span>
         </div>
         <div class="proj-more">View details <svg viewBox="0 0 12 12" fill="none"><path d="M2 6H10M10 6L6.5 2.5M10 6L6.5 9.5" stroke="currentColor" stroke-width="1.3"/></svg></div>
       </button>
@@ -852,6 +888,17 @@
       tags: ["Reinforcement Learning", "PPO", "Ray RLlib", "Gymnasium", "PyTorch", "Streamlit", "Markov Decision Process"],
       link: "https://github.com/youssef6765/Grad.app",
       demo: "https://gradapp-8db85p9lzyq3sw6b2sqs6g.streamlit.app/"
+    },
+    {
+      title: "TripClone — Group Travel Booking Platform",
+      eyebrow: "Personal Project",
+      overview: [
+        "Built a full-stack group travel booking platform with Laravel, featuring a Filament-powered admin dashboard for managing trips, hosts, and bookings.",
+        "Designed a public-facing trip catalog with search and filtering (destination, price, date range) and an end-to-end booking request flow.",
+        "Styled with Tailwind CSS for a responsive, modern interface across all pages."
+      ],
+      tags: ["Laravel", "Filament", "MySQL", "Tailwind CSS", "Blade"],
+      link: ""
     }
   ];
 
@@ -917,6 +964,29 @@
   document.querySelectorAll('.proj-card, .featured-project').forEach(card => {
     card.addEventListener('click', () => openModal(parseInt(card.dataset.project, 10)));
   });
+
+  /* ---------- PROJECT CATEGORY FILTERING ---------- */
+  (function(){
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterable = document.querySelectorAll('.proj-card, .featured-project');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        filterable.forEach(card => {
+          const cats = (card.dataset.category || '').split(' ');
+          const show = filter === 'all' || cats.includes(filter);
+          card.classList.toggle('filtered-out', !show);
+          // ensure newly-shown cards are visible even if scroll-reveal already fired/hasn't fired
+          if(show) card.classList.add('is-visible');
+        });
+      });
+    });
+  })();
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
   backdrop.addEventListener('click', (e) => { if(e.target === backdrop) closeModal(); });
